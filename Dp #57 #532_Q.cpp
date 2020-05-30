@@ -93,6 +93,7 @@ int main() {
 	ll x=0;
 	ll y=0;
 	cin>>steps;
+	vec.clear();
 	if(steps%2!=0) { cout<<"IMPOSSIBLE"<<endl; return 0;}
 	ll t=steps;
 	steps/=2;
