@@ -38,12 +38,14 @@
 #define 	rsort(vec) sort(vec.begin(),vec.end(),compare)
 #define 	endl '\n'
 #define 	Endl endl
+#define 	setbits(x) __builtin_popcountll(x)
+#define 	zrobits(x) __builtin_ctzll(x)
 #define 	ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update> 
 #define 	roundoff std::cout << std::setprecision(15)
 #define 	inf 9223372036854775807
 #define 	infn -9223372036854775807
 #define 	pi 3.14159265358979323846
-const 		int mod = 998244353 ; 
+const 		int mod = 1e9+7; 
 #define 	intsize(num) trunc(log10(num)) + 1
 #define 	REVERSE(vec) reverse(vec.begin(),vec.end())
 using 		namespace __gnu_pbds; 
@@ -54,107 +56,66 @@ ll lcm (ll a, ll b) { return a / gcd(a, b) * b; }
 
 //code start from here 
 
-vector<ll>adj[300100];
-bool visited[300100];
-bool flag=true;
-ll check[300100];
-ll mp1[3]={0};
-const int N = int(3e5) + 999;
-int p2[N];
+void constructTree(ll input[], ll segTree[], ll low, ll high, ll pos){
+	if(low==high){
+		segTree[pos]=input[low];
+		return ;
+	}
+	ll mid=(low+high)/2;
+	constructTree(input,segTree,low,mid,2*pos+1);
+	constructTree(input,segTree,mid+1,high,2*pos+2);
+	segTree[pos]=min(segTree[2*pos+1],segTree[2*pos+2]);
+}
 
 
+vector<ll>adj[200100];
+bool visited[200100];
+vector<pair<ll,ll>>vec;
+ll arr[200100];
 
-ll k=0;
 
 void dfs(ll a, ll b){
-	mp1[b]++;
 	visited[a]=true;
-	check[a]=b;
+	if(adj[a].size()==1) arr[a]=b;
+	if(adj[a].size()==1 && a!=1) vec.pb(mp(a,b));
 	loop(j,0,adj[a].size()){
 		if(!visited[adj[a][j]]){
-			if(b==1) k=2;
-			else k=1;
-			dfs(adj[a][j],k);
+			dfs(adj[a][j],b+1);
 		}
-		else {
-			if(check[adj[a][j]]==b){flag=false;return;}
+	}
+}
 
-		}
-	}
-}
- ll dp[300100];
-ll pwer(ll a, ll b){
- 
-	ll l=1;
-	if(dp[a]==-1){
-		loop(j,1,a+1){
-			l=l*2;
-			l%=mod;
-		}
-		dp[a]=l;
-	}	
-	ll p=1;
-	if(dp[b]==-1){
-		loop(j,1,b+1){
-			p*=2;
-			p%=mod;
-		}
-		dp[b]=p;
-	}
-	return (dp[a]+dp[b])%mod;
-}
- 
+
 int main() {
 	fast;
 	time;
-
 	#ifndef ONLINE_JUDGE
  	 	freopen("input.txt","r",stdin);
 	  	freopen("output.txt","w",stdout);
-	#endif	
-	p2[0] = 1;
-    for(int i = 1; i < N; ++i)
-    p2[i] = (2 * p2[i - 1]) % mod;	
-	memset(dp,-1,sizeof(dp));
-	int t;
-    scanf("%d", &t);	
-	while(t--){
+	#endif
+  	memset(visited,false,sizeof(visited));
+	read(a)
+	read(b)
+	ll p=a-1;
+	while(p--){
+		read(c)
+		read(d)
+		adj[c].pb(d);
+		adj[d].pb(c);
+	}
 
-		int n , m; 
-		scanf("%d%d", &n, &m);
-		loop(j,1,n+1) visited[j]=false;
-		loop(j,1,n+1) check[j]=-1;
-		loop(j,1,n+1) adj[j].clear();
-		while(m--){
-			int z, x;
-    		scanf("%d %d", &z, &x);
-			adj[x].pb(z);
-			adj[z].pb(x);
-		}
-		ll sum=1;
-		bool boo=true;
-		flag=true;
-	  	sum=1;
-	 	mp1[1]=0;
-		mp1[2]=0;
-		loop(j,1,n+1){
-			if(!visited[j]){
-				dfs(j,1);
-				if(!flag){cout<<0<<endl;boo=false;break;}
-				ll mm=pwer(mp1[1],mp1[2])%mod;
-				sum=sum*mm*1LL;
-				sum%=mod;
-				mp1[1]=0;
-				mp1[2]=0;
-			}
-		}
-
-		mp1[1]=0;
-		mp1[2]=0;
-		if(boo){
-			cout<<sum<<'\n';
+	dfs(1,0);
+	ll sum=0;
+	bool flag=false;
+	memset(visited,false,sizeof(visited));
+	dfs(b,0);
+	loop(j,0,vec.size()){
+		if(arr[vec[j].ff]<vec[j].ss){
+			sum=max(vec[j].ss,sum);
 		}
 	}
+	cout<<sum*2<<endl;
+
 	return 0;
 }
 
